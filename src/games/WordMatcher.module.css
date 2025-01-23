@@ -1,0 +1,105 @@
+:root {
+    --background-light: #f0f0f0;
+    --background-dark: #141414;
+
+    --text-light: #121a16;
+    --text-dark: #f0f0f0;
+
+    --card-background-light : #ffffff;
+    --card-background-dark: #2e2e2e;
+    --card-background-error-light: #fc6161;
+    --card-background-error-dark: #bd3232;
+    --card-background-success-light: #94f594;
+    --card-background-success-dark: #2acf2a;
+
+    --card-shadow-light: 0 1px 1px rgba(0, 0, 0, 0.4), inset 0 -1px 2px rgba(0, 0, 0, 0.25);
+    --card-shadow-dark: 0 1px 1px rgba(0, 0, 0, 0.5), inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background: var(--background-dark);
+        --card-background: var(--card-background-dark);
+        --card-background-error: var(--card-background-error-dark);
+        --card-background-success: var(--card-background-success-dark);
+        --card-shadow: var(--card-shadow-dark);
+        --text: var(--text-dark);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --background: var(--background-light);
+        --card-background: var(--card-background-light);
+        --card-background-error: var(--card-background-error-light);
+        --card-background-success: var(--card-background-success-light);
+        --card-shadow: var(--card-shadow-light);
+        --text: var(--text-light);
+    }
+}
+
+.container {
+    width: 100dvw;
+    height: 100dvh;
+    position: relative;
+    background: var(--background);
+    overflow: hidden;
+    user-select: none;
+    touch-action: none;
+    color: var(--text);
+}
+
+.card {
+    position: absolute;
+    background: var(--card-background);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    /* border: 0.5px solid rgba(0, 0, 0, 0.25); */
+    
+    padding: 12px;
+    cursor: move;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    translate: var(--x) var(--y);
+    scale: 1;
+    rotate: var(--random-rotation);
+}
+
+.romanization {
+    font-size: 0.75rem;
+}
+
+.english {
+    font-size: 0.75rem;
+}
+
+.selected {
+    z-index: 10;
+}
+
+.emoji {
+    font-size: 3rem;
+}
+
+.overlap {
+    outline: 4px solid #42caff;
+    outline-offset: 2px;
+}
+
+.controls {
+    position: absolute;
+    inset: 0;
+    z-index: 1000;
+    pointer-events: none;
+
+    &>* {
+        pointer-events: all;
+    }
+}
