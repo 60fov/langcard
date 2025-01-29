@@ -1,7 +1,8 @@
-import { JSX, ParentComponent, createEffect } from "solid-js";
+import { Component, JSX, ParentComponent, createEffect } from "solid-js";
 import { For, onMount } from "solid-js";
 import { createStore } from "solid-js/store";
 import * as WordList from "../wordlist";
+import { PauseIcon, PlayIcon, ReloadIcon } from "../components/icons";
 
 import styles from "./Scattergories.module.css";
 
@@ -90,11 +91,32 @@ export default function Scattergories() {
     }
   };
 
+  const handleReset: JSX.EventHandler<HTMLButtonElement, MouseEvent> = (event) => {
+    timerEnd();
+    setState("time", 120);
+    setState("isPlaying", false);
+  };
+
   return (
     <div class={styles.rootContainer}>
       <div class={styles.sidebar}>
         <SidebarItem text={state.isPlaying ? "Pause" : "Play"}>
-          <button onClick={handleTogglePlay} style={{ "font-size": "2em" }}>{state.isPlaying ? "Pause" : "Play"}</button>
+          <div style={{
+            "display": "flex",
+            "padding": "0 0 1em 0",
+            "justify-content": "end",
+          }}>
+            <button
+              class={styles.button}
+              onClick={handleReset}>
+              <ReloadIcon style={{ "font-size": "16px" }} />
+            </button>
+          </div>
+          <button
+            onClick={handleTogglePlay}
+            style={{ "font-size": "4em" }}
+            class={styles.button}
+          >{state.isPlaying ? <PauseIcon /> : <PlayIcon />}</button>
         </SidebarItem>
         <SidebarItem text="# of categories">
           <input
@@ -106,7 +128,7 @@ export default function Scattergories() {
           />
         </SidebarItem>
         <SidebarItem text="timer">
-          <span style={{ "font-size": "2em" }}>{state.time}</span>
+          <Timer currentTime={state.time} duration={120}></Timer>
         </SidebarItem>
         <SidebarItem text="starts with">
           <span style={{ "font-size": "2em" }}>{state.initalLetter}</span>
@@ -114,13 +136,9 @@ export default function Scattergories() {
       </div>
       <ol class={styles.categoryList}>
         <For each={state.categoryList}>
-          {(word, index) => (
+          {(category, index) => (
             <li>
-              <span
-                style={{
-                  "background": "#ffff00",
-                }}
-              >{word}</span>
+              <CategoryInput category={category} />
               <span
                 style={{
                   "position": "absolute",
@@ -149,6 +167,41 @@ const SidebarItem: ParentComponent<SidebarItemProps> = (props) => {
     <div class={styles.sidebarItem}>
       <span class={styles.sidebarItemContent}>{props.children}</span>
       <span class={styles.sidebarItemText}>{props.text}</span>
+    </div>
+  );
+}
+
+type CategoryProps = {
+  category: string,
+};
+
+const CategoryInput: Component<CategoryProps> = (props) => {
+  return (
+    <div class={styles.categoryInput}>
+      <input type="text" />
+      <label>{props.category}</label>
+    </div>
+  )
+}
+
+type TimerProps = {
+  currentTime: number;
+  duration: number;
+};
+
+const Timer: ParentComponent<TimerProps> = (props) => {
+
+  const angle = () => (props.currentTime / props.duration) * Math.PI * 2;
+
+  return (
+    <div class={styles.timer}>
+      <div
+        style={{
+          "--a": `${angle()}rad`,
+        }}
+      >
+      </div>
+      <span>{props.currentTime}</span>
     </div>
   );
 }
