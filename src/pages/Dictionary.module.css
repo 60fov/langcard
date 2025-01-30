@@ -1,0 +1,46 @@
+.rootContainer {
+}
+
+.categorySelect {
+  background: none;
+  font-size: 2em;
+  border: 2px solid #eee;
+}
+
+.entryList {
+  display: flex;
+  flex-flow: wrap;
+  gap: 1em;
+  margin: 0;
+  padding: 0;
+}
+
+.wordEntry {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  font-size: 2em;
+  border: 2px solid #eee;
+  width: 200px;
+  height: 200px;
+  white-space: nowrap;
+
+  & > div[data-korean] {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  & > div[data-visible="false"] {
+    position: relative;
+    &:after {
+      content: "";
+      background: #111;
+      position: absolute;
+      inset: 0;
+    }
+  }
+}

@@ -18,41 +18,31 @@ export const categories: Category[] = [
     id: 'animals',
     words: [
       { id: 'dog', emoji: '🐕', korean: '개', english: 'dog' },
-      { id: 'dog_face', emoji: '🐶', korean: '강아지', english: 'dog face' },
       { id: 'cat', emoji: '🐱', korean: '고양이', english: 'cat' },
-      { id: 'cat_face', emoji: '🐈', korean: '고양이 얼굴', english: 'cat face' },
       { id: 'black_cat', emoji: '🐈‍⬛', korean: '검은 고양이', english: 'black cat' },
       { id: 'mouse', emoji: '🐭', korean: '쥐', english: 'mouse' },
-      { id: 'mouse_face', emoji: '🐁', korean: '쥐 얼굴', english: 'mouse face' },
       { id: 'rat', emoji: '🐀', korean: '쥐', english: 'rat' },
       { id: 'hamster', emoji: '🐹', korean: '햄스터', english: 'hamster' },
       { id: 'rabbit', emoji: '🐇', korean: '토끼', english: 'rabbit' },
-      { id: 'rabbit_face', emoji: '🐰', korean: '토끼 얼굴', english: 'rabbit face' },
       { id: 'fox', emoji: '🦊', korean: '여우', english: 'fox' },
       { id: 'bear', emoji: '🐻', korean: '곰', english: 'bear' },
       { id: 'polar_bear', emoji: '🐻‍❄️', korean: '북극곰', english: 'polar bear' },
       { id: 'panda', emoji: '🐼', korean: '판다', english: 'panda' },
       { id: 'koala', emoji: '🐨', korean: '코알라', english: 'koala' },
-      { id: 'tiger', emoji: '🐯', korean: '호랑이', english: 'tiger' },
-      { id: 'tiger_face', emoji: '🐅', korean: '호랑이 얼굴', english: 'tiger face' },
+      { id: 'tiger', emoji: '🐯' /* '🐅' */, korean: '호랑이', english: 'tiger' },
       { id: 'lion', emoji: '🦁', korean: '사자', english: 'lion' },
       { id: 'cow', emoji: '🐄', korean: '소', english: 'cow' },
       { id: 'ox', emoji: '🐂', korean: '황소', english: 'ox' },
       { id: 'water_buffalo', emoji: '🐃', korean: '물소', english: 'water buffalo' },
-      { id: 'cow_face', emoji: '🐮', korean: '소 얼굴', english: 'cow face' },
       { id: 'pig', emoji: '🐖', korean: '돼지', english: 'pig' },
-      { id: 'pig_face', emoji: '🐷', korean: '돼지 얼굴', english: 'pig face' },
       { id: 'boar', emoji: '🐗', korean: '멧돼지', english: 'boar' },
       { id: 'pig_nose', emoji: '🐽', korean: '돼지 코', english: 'pig nose' },
       { id: 'monkey', emoji: '🐒', korean: '원숭이', english: 'monkey' },
-      { id: 'monkey_face', emoji: '🐵', korean: '원숭이 얼굴', english: 'monkey face' },
       { id: 'gorilla', emoji: '🦍', korean: '고릴라', english: 'gorilla' },
       { id: 'orangutan', emoji: '🦧', korean: '오랑우탄', english: 'orangutan' },
       { id: 'chicken', emoji: '🐔', korean: '닭', english: 'chicken' },
       { id: 'rooster', emoji: '🐓', korean: '수탉', english: 'rooster' },
-      { id: 'hatching_chick', emoji: '🐣', korean: '부화한 병아리', english: 'hatching chick' },
-      { id: 'baby_chick', emoji: '🐤', korean: '병아리', english: 'baby chick' },
-      { id: 'front_facing_chick', emoji: '🐥', korean: '앞을 보는 병아리', english: 'front-facing chick' },
+      { id: 'baby_chick', emoji: '🐣', korean: '병아리', english: 'baby chick' },
       { id: 'bird', emoji: '🐦', korean: '새', english: 'bird' },
       { id: 'penguin', emoji: '🐧', korean: '펭귄', english: 'penguin' },
       { id: 'dove', emoji: '🕊️', korean: '비둘기', english: 'dove' },
@@ -112,7 +102,6 @@ export const categories: Category[] = [
       { id: 'caretaker', emoji: '🧑‍🍼', korean: '돌보미', english: 'caretaker' },
       { id: 'dancer', emoji: '💃', korean: '댄서', english: 'dancer' },
       { id: 'soldier', emoji: '🪖', korean: '군인', english: 'soldier' },
-      { id: 'pilot', emoji: '🧑‍✈️', korean: '조종사', english: 'pilot' },
       { id: 'business_person', emoji: '👨‍💼', korean: '비즈니스맨', english: 'business person' }
     ]
   },
@@ -128,7 +117,7 @@ export const categories: Category[] = [
       { id: 'pink', emoji: '💗', korean: '분홍색', english: 'pink' },
       { id: 'orange', emoji: '🟧', korean: '주황색', english: 'orange' },
       { id: 'black', emoji: '⚫', korean: '검정색', english: 'black' },
-      { id: 'white', emoji: '⚪', korean: '흰색', english: 'white' }
+      { id: 'white', emoji: '⚪', korean: '흰색' /* 하얀색 */, english: 'white' }
     ]
   },
   {
@@ -150,7 +139,7 @@ export const categories: Category[] = [
       { id: 'chili', emoji: '🌶️', korean: '고추', english: 'chili' },
       { id: 'ramen', emoji: '🍜', korean: '국수', english: 'ramen' },
       { id: 'green_tea', emoji: '🍵', korean: '녹차', english: 'green tea' },
-      { id: 'egg', emoji: '🥚', korean: '달걀', english: 'egg' },
+      { id: 'egg', emoji: '🥚', korean: '달걀' /* 계란 */, english: 'egg' },
       { id: 'carrot', emoji: '🥕', korean: '당근', english: 'carrot' },
       { id: 'doughnut', emoji: '🍩', korean: '도넛', english: 'doughnut' },
       { id: 'strawberry', emoji: '🍓', korean: '딸기', english: 'strawberry' },
@@ -295,6 +284,21 @@ export const categories: Category[] = [
     ]
   },
   {
+    id: 'sino_numbers',
+    words: [
+      { id: 'one', emoji: '1️⃣', korean: '일', english: 'one' },
+      { id: 'two', emoji: '2️⃣', korean: '이', english: 'two' },
+      { id: 'three', emoji: '3️⃣', korean: '삼', english: 'three' },
+      { id: 'four', emoji: '4️⃣', korean: '사', english: 'four' },
+      { id: 'five', emoji: '5️⃣', korean: '오', english: 'five' },
+      { id: 'six', emoji: '6️⃣', korean: '육', english: 'six' },
+      { id: 'seven', emoji: '7️⃣', korean: '칠', english: 'seven' },
+      { id: 'eight', emoji: '8️⃣', korean: '발', english: 'eight' },
+      { id: 'nine', emoji: '9️⃣', korean: '구', english: 'nine' },
+      { id: 'ten', emoji: '🔟', korean: '십', english: 'ten' }
+    ]
+  },
+  {
     id: 'transportation',
     words: [
       { id: 'car', emoji: '🚗', korean: '자동차', english: 'car' },
@@ -369,16 +373,10 @@ export const categories: Category[] = [
   {
     id: 'time',
     words: [
-      { id: 'morning', emoji: '🌅', korean: '아침', english: 'morning' },
-      { id: 'afternoon', emoji: '🌞', korean: '오후', english: 'afternoon' },
-      { id: 'evening', emoji: '🌆', korean: '저녁', english: 'evening' },
-      { id: 'night', emoji: '🌙', korean: '밤', english: 'night' },
-      { id: 'today', emoji: '📅', korean: '오늘', english: 'today' },
-      { id: 'tomorrow', emoji: '📆', korean: '내일', english: 'tomorrow' },
-      { id: 'yesterday', emoji: '📅', korean: '어제', english: 'yesterday' },
-      { id: 'week', emoji: '📅', korean: '주', english: 'week' },
-      { id: 'month', emoji: '📅', korean: '달', english: 'month' },
-      { id: 'year', emoji: '📅', korean: '년', english: 'year' }
+
+      { id: 'sunrise', emoji: '🌅', korean: '', english: 'sunrise' },
+      { id: 'sunset', emoji: '🌇', korean: '노을' /* 일몰 (time) */, english: 'sunset' },
+      
     ]
   },
   {
