@@ -2,6 +2,11 @@
   background: #333;
   width: 100dvw;
   height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
 }
 
 @font-face {
@@ -13,6 +18,9 @@
   --grid-size: 10;
   --gap: 0px;
 
+  background: #eee;
+  aspect-ratio: 1;
+
   display: inline-grid;
   grid-template-columns: repeat(calc(var(--grid-size)), 1fr);
   grid-template-rows: repeat(calc(var(--grid-size)), 1fr);
@@ -20,14 +28,4 @@
 
   font-size: 2em;
   font-family: 'Noto Color Emoji';
-}
-
-.tile {
-  background: #eee;
-  width: var(--tile-size);
-  aspect-ratio: 1;
-
-  &[data-lit="true"] {
-    background: #111;
-  }
 }
