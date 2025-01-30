@@ -125,8 +125,10 @@ export default function Snake() {
               .slice(0, state.itemCount - 1)
               .concat(newWord)
               .map((word) => ({word, tileIndex: Math.floor(Math.random() * state.gridSize ** 2)}))
-              .sort(() => Math.random() - 0.5)
-            setState("itemList", newItemList)
+              .sort(() => Math.random() - 0.5);
+            setState("itemList", newItemList);
+            setState("prevWordList", state.prevWordList.length, hitItem.word);
+            // setState("snakeTileIndexList", produce((snakeIndexList) => snakeIndexList.))
         } else {
             console.log("wrong item");
             setState("itemList", produce((itemList) => itemList.splice(hitItemIndex, 1)))
