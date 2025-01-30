@@ -3,93 +3,67 @@ import styles from "./Snake.module.css";
 import { For, createEffect, onMount } from "solid-js";
 import * as WordList from "../wordlist";
 
+
+const east = 0;
+const south = 1;
+const west = 2;
+const north = 3;
+
 type SnakeState = {
     gridSize: number,
-    tileList: TileState[] | undefined,
-    goal: Goal | undefined,
-    collectedBlockList: Block[],
-};
-
-type TileState = {
-    lit: boolean,
-    content: string,
-};
-
-type Block = {
-    tileIndex: number,
-    text: string,
-};
-
-type Goal = {
-    word: WordList.Word,
-    blockList: Block[],
+    targetWord: WordList.Word | undefined,
+    prevWordList: WordList.Word[],
+    tileIndexList: number[],
+    direction: number,
 };
 
 const initialState: SnakeState = {
     gridSize: 20,
-    tileList: undefined,
-    goal: undefined,
-    collectedBlockList: [],
+    targetWord: undefined,
+    prevWordList: [],
+    tileIndexList: [],
+    direction: east,
 };
-
-const generateTileList = (state: SnakeState) => {
-    if (!state.tileList) {
-        return Array
-            .from({ length: state.gridSize * state.gridSize })
-            .map(() => ({
-                lit: false,
-                content: '',
-            }))
-    }
-
-    if (!state.goal) {
-        throw Error("no goal n genreate TIles");
-    }
-
-    for (let block of state.goal.blockList) {
-        state.tileList[block.tileIndex] = {
-            lit: true,
-            content: block.text,
-        };
-    }
-}
 
 export default function Snake() {
     const [state, setState] = createStore<SnakeState>(initialState);
 
     onMount(() => {
         setState(produce((state) => {
-            state.tileList = generateTileList(state);
             const wordPool = WordList.getAllWords();
             const newWord = wordPool[Math.floor(Math.random() * wordPool.length)];
-            state.goal = {
-                word: newWord,
-                blockList: newWord.korean.split('').map((syllable) => ({
-                    tileIndex: Math.floor(Math.random() * state.gridSize * state.gridSize),
-                    text: syllable,
-                })),
-            }
+            state.targetWord = newWord;
+
+            state.tileIndexList = [state.gridSize / 2 + state.gridSize / 2 * state.gridSize];
+            state.prevWordList = [WordList.getAllWords().sort(() => Math.random() - 0.5).at(0)!];
         }));
     });
-
-    // createEffect(() => {
-    //     setState("tileList", () => generateTileList(state));
-    // });
 
     return (
         <div
             class={styles.rootContainer}
-            style={{
-                "--grid-size": `${state.gridSize}`,
-                "--tile-size": "20px",
-                "--gap": "0px",
-            }}
         >
-            <For each={state.tileList}>
-                {(tile) =>
-                    <div data-lit={tile.lit}>{tile.content}</div>
-                }
-            </For>
+            <div
+                class={styles.gridContainer}
+                style={{
+                    "--grid-size": `${state.gridSize}`,
+                    "--tile-size": "20px",
+                    "--gap": "1px",
+                }}
+            >
+                <For each={state.tileIndexList}>
+                    {(tileIndex, index) => {
+                        const x = Math.floor(tileIndex % state.gridSize);
+                        const y = Math.floor(tileIndex / state.gridSize);
+                        return <div
+                            style={{
+                                "grid-column": `${x}`,
+                                "grid-row": `${y}`,
+                            }}
+                        >{state.prevWordList[index()].emoji}</div>
+                    }}
+                </For>
+            </div>
         </div>
     )
 }

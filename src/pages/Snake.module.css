@@ -1,20 +1,33 @@
 .rootContainer {
+  background: #333;
+  width: 100dvw;
+  height: 100dvh;
+}
+
+@font-face {
+  font-family: "Toss Face";
+  src: url("/src/assets/font/TossFaceFontMac.ttf") format('truetype');
+}
+.gridContainer {
   --tile-size: 20px;
   --grid-size: 10;
   --gap: 0px;
-  display: flex;
-  flex-flow: wrap;
+
+  display: inline-grid;
+  grid-template-columns: repeat(calc(var(--grid-size)), 1fr);
+  grid-template-rows: repeat(calc(var(--grid-size)), 1fr);
   gap: var(--gap);
-  width: calc((var(--tile-size) + var(--gap)) * var(--grid-size));
+
+  font-size: 2em;
+  font-family: 'Noto Color Emoji';
+}
+
+.tile {
+  background: #eee;
+  width: var(--tile-size);
   aspect-ratio: 1;
 
-  & > div {
-    background: #eee;
-    width: var(--tile-size);
-    aspect-ratio: 1;
-
-    &[data-lit="true"] {
-      background: #111;
-    }
+  &[data-lit="true"] {
+    background: #111;
   }
 }
