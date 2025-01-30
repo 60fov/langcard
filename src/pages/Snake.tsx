@@ -54,7 +54,6 @@ export default function Snake() {
               .map((word) => ({word, tileIndex: Math.floor(Math.random() * state.gridSize ** 2)}))
               .sort(() => Math.random() - 0.5)
         }));
-      console.log("init item list", unwrap(state.itemList));
 
         play();
     });
@@ -115,7 +114,7 @@ export default function Snake() {
         if (!hitItem) return;
         const hitItemIndex = state.itemList.indexOf(hitItem);
 
-        if (hitItem.word === state.targetWord) {
+        if (hitItem.word.id === state.targetWord?.id) {
             console.log("hit target word");
             const wordPool = WordList.getAllWords();
             const newWord = wordPool[Math.floor(Math.random() * wordPool.length)];
@@ -148,7 +147,7 @@ export default function Snake() {
                 class={styles.gridContainer}
                 style={{
                     "--grid-size": `${state.gridSize}`,
-                    "--tile-size": "20px",
+                    "--tile-size": "40px",
                     "--gap": "1px",
                 }}
             >
@@ -158,6 +157,7 @@ export default function Snake() {
                         const y = Math.floor(tileIndex / state.gridSize);
                         return <div
                             style={{
+                                "position": 'absolute',
                                 "grid-column": `${x}`,
                                 "grid-row": `${y}`,
                             }}

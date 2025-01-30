@@ -20,10 +20,11 @@
 
   background: #eee;
   aspect-ratio: 1;
+  position: relative;
 
   display: inline-grid;
-  grid-template-columns: repeat(calc(var(--grid-size)), 1fr);
-  grid-template-rows: repeat(calc(var(--grid-size)), 1fr);
+  grid-template-columns: repeat(calc(var(--grid-size)), var(--tile-size));
+  grid-template-rows: repeat(calc(var(--grid-size)), var(--tile-size));
   gap: var(--gap);
 
   font-size: 2em;
