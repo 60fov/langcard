@@ -116,19 +116,21 @@ export default function Snake() {
 
         if (hitItem.word.id === state.targetWord?.id) {
             console.log("hit target word");
-            const wordPool = WordList.getAllWords();
-            const newWord = wordPool[Math.floor(Math.random() * wordPool.length)];
-            setState("targetWord", newWord);
-            const newItemList = WordList
-              .getAllWords()
-              .sort(() => Math.random() - 0.5)
-              .slice(0, state.itemCount - 1)
-              .concat(newWord)
-              .map((word) => ({word, tileIndex: Math.floor(Math.random() * state.gridSize ** 2)}))
-              .sort(() => Math.random() - 0.5);
-            setState("itemList", newItemList);
-            setState("prevWordList", state.prevWordList.length, hitItem.word);
-            // setState("snakeTileIndexList", produce((snakeIndexList) => snakeIndexList.))
+            setState(produce((state) => {
+                const wordPool = WordList.getAllWords();
+                const newWord = wordPool[Math.floor(Math.random() * wordPool.length)];
+                state.targetWord = newWord;
+                const newItemList = WordList
+                  .getAllWords()
+                  .sort(() => Math.random() - 0.5)
+                  .slice(0, state.itemCount - 1)
+                  .concat(newWord)
+                  .map((word) => ({word, tileIndex: Math.floor(Math.random() * state.gridSize ** 2)}))
+                  .sort(() => Math.random() - 0.5);
+                state.itemList = newItemList;
+                state.prevWordList.push(hitItem.word);
+                state.snakeTileIndexList.push(state.snakeTileIndexList.at(-1)!);
+            }))
         } else {
             console.log("wrong item");
             setState("itemList", produce((itemList) => itemList.splice(hitItemIndex, 1)))
@@ -142,7 +144,7 @@ export default function Snake() {
         <div
             class={styles.rootContainer}
         >
-            <div style={{"font-size": "2em"}}>
+            <div style={{"font-size": "4em"}}>
                 {state.targetWord?.korean}
             </div>
             <div
@@ -155,8 +157,8 @@ export default function Snake() {
             >
                 <For each={state.snakeTileIndexList}>
                     {(tileIndex, index) => {
-                        const x = Math.floor(tileIndex % state.gridSize);
-                        const y = Math.floor(tileIndex / state.gridSize);
+                        const x = Math.floor(tileIndex % state.gridSize) + 1;
+                        const y = Math.floor(tileIndex / state.gridSize) + 1;
                         return <div
                             style={{
                                 "position": 'absolute',
@@ -168,8 +170,8 @@ export default function Snake() {
                 </For>
                 <For each={state.itemList}>
                   {(item) => {
-                        const x = Math.floor(item.tileIndex % state.gridSize);
-                        const y = Math.floor(item.tileIndex / state.gridSize);
+                        const x = Math.floor(item.tileIndex % state.gridSize) + 1;
+                        const y = Math.floor(item.tileIndex / state.gridSize) + 1;
                         return <div
                             style={{
                                 "grid-column": `${x}`,

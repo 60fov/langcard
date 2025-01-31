@@ -14,6 +14,12 @@ export interface Category {
 export type RomanizationType = 'revised' | 'yale' | 'mcr';
 
 export const categories: Category[] = [
+  // {
+    // id: 'beginner',
+    // words: [
+    //   // TODO
+    // ],
+  // },
   {
     id: 'animals',
     words: [
