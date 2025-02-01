@@ -13,6 +13,7 @@
   font-family: "Toss Face";
   src: url("/src/assets/font/TossFaceFontMac.ttf") format('truetype');
 }
+
 .gridContainer {
   --tile-size: 20px;
   --grid-size: 10;

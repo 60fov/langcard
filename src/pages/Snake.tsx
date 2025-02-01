@@ -2,6 +2,7 @@ import { createStore, produce, unwrap } from "solid-js/store";
 import styles from "./Snake.module.css";
 import { For, JSX, createEffect, onCleanup, onMount } from "solid-js";
 import * as WordList from "../wordlist";
+import { createSignal } from "solid-js";
 
 
 const east = 0;
@@ -13,7 +14,7 @@ type SnakeState = {
     gridSize: number,
     targetWord: WordList.Word | undefined,
     itemCount: number,
-    itemList: {word: WordList.Word, tileIndex: number}[],
+    itemList: { word: WordList.Word, tileIndex: number }[],
     snakeTileIndexList: number[],
     prevWordList: WordList.Word[],
     direction: number,
@@ -36,77 +37,102 @@ const initialState: SnakeState = {
 
 export default function Snake() {
     const [state, setState] = createStore<SnakeState>(initialState);
+    const [category, setCategory] = createSignal<string | undefined>()
+
+    const wordPool = () => {
+        const cat = category();
+        return cat ? WordList.getWordsByCategory(cat) : WordList.getAllWords()
+    }
 
     const moveMs = () => 1000 / state.moveFreq;
 
     onMount(() => {
-        setState(produce((state) => {
-            const wordPool = WordList.getAllWords();
-            const newWord = wordPool[Math.floor(Math.random() * wordPool.length)];
-            state.targetWord = newWord;
-            state.snakeTileIndexList = [state.gridSize / 2 + state.gridSize / 2 * state.gridSize];
-            state.prevWordList = [WordList.getAllWords().sort(() => Math.random() - 0.5).at(0)!];
-            state.itemList = WordList
-              .getAllWords()
-              .sort(() => Math.random() - 0.5)
-              .slice(0, state.itemCount - 1)
-              .concat(newWord)
-              .map((word) => ({word, tileIndex: Math.floor(Math.random() * state.gridSize ** 2)}))
-              .sort(() => Math.random() - 0.5)
-        }));
-
+        initialize();
         play();
     });
 
     onCleanup(() => {
-      document.removeEventListener('keydown', handleKeyDown);
-      // document.removeEventListener('keyup', handleKeyUp);
+        document.removeEventListener('keydown', handleKeyDown);
+        // document.removeEventListener('keyup', handleKeyUp);
     });
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === "ArrowLeft" || event.code === "KeyA") {
-        setState("direction", west);
-      }
-      if (event.code === "ArrowDown" || event.code === "KeyS") {
-        setState("direction", south);
-      }
-      if (event.code === "ArrowRight" || event.code === "KeyA") {
-        setState("direction", east);
-      }
-      if (event.code === "ArrowUp" || event.code === "KeyW") {
-        setState("direction", north);
-      }
+        if (event.code === "ArrowLeft" || event.code === "KeyA") {
+            setState("direction", west);
+        }
+        if (event.code === "ArrowDown" || event.code === "KeyS") {
+            setState("direction", south);
+        }
+        if (event.code === "ArrowRight" || event.code === "KeyA") {
+            setState("direction", east);
+        }
+        if (event.code === "ArrowUp" || event.code === "KeyW") {
+            setState("direction", north);
+        }
     }
 
     const play = () => {
         setState("moveIntervalId", setInterval(move, moveMs()));
     };
 
+
+    const initialize = () => {
+        setState(produce((state) => {
+            const newWord = wordPool()[Math.floor(Math.random() * wordPool.length)];
+            state.targetWord = newWord;
+            state.snakeTileIndexList = [state.gridSize / 2 + state.gridSize / 2 * state.gridSize];
+            state.prevWordList = [wordPool().sort(() => Math.random() - 0.5).at(0)!];
+
+            state.itemList = wordPool()
+                .sort(() => Math.random() - 0.5)
+                .slice(0, state.itemCount - 1)
+                .concat(newWord)
+                .map((word) => ({ word, tileIndex: Math.floor(Math.random() * state.gridSize ** 2) }))
+                .sort(() => Math.random() - 0.5)
+        }));
+    }
+
     const move = () => {
         setState("snakeTileIndexList", produce((tileIndexList) => {
-          const headIndex = tileIndexList[0];
-          let x = Math.floor(headIndex % state.gridSize);
-          let y = Math.floor(headIndex / state.gridSize);
-          switch(state.direction) {
-              case east: { x += 1; } break;
-              case south: { y += 1; } break;
-              case west: { x -= 1; } break;
-              case north: { y -= 1; } break;
-          }
-          // clamp
-          // x = Math.max(Math.min(x, state.gridSize - 1), 0);
-          // y = Math.max(Math.min(y, state.gridSize - 1), 0);
-          // wrap
-          x %= state.gridSize;
-          if (x < 0) x = state.gridSize - 1;
-          y %= state.gridSize;
-          if (y < 0) y = state.gridSize - 1;
+            const headIndex = tileIndexList[0];
+            let x = Math.floor(headIndex % state.gridSize);
+            let y = Math.floor(headIndex / state.gridSize);
+            switch (state.direction) {
+                case east: { x += 1; } break;
+                case south: { y += 1; } break;
+                case west: { x -= 1; } break;
+                case north: { y -= 1; } break;
+            }
+            // clamp
+            // x = Math.max(Math.min(x, state.gridSize - 1), 0);
+            // y = Math.max(Math.min(y, state.gridSize - 1), 0);
+            // wrap
+            x %= state.gridSize;
+            if (x < 0) x = state.gridSize - 1;
+            y %= state.gridSize;
+            if (y < 0) y = state.gridSize - 1;
 
-          const newHeadIndex = x + y * state.gridSize;
-          tileIndexList.pop();
-          tileIndexList.splice(0, 0, newHeadIndex);
+            const newHeadIndex = x + y * state.gridSize;
+            tileIndexList.pop();
+            tileIndexList.splice(0, 0, newHeadIndex);
         }));
     };
+
+    createEffect(() => {
+        setState(produce((state) => {
+            const newWord = wordPool()[Math.floor(Math.random() * wordPool.length)];
+            state.targetWord = newWord;
+            state.snakeTileIndexList = [state.gridSize / 2 + state.gridSize / 2 * state.gridSize];
+            state.prevWordList = [wordPool().sort(() => Math.random() - 0.5).at(0)!];
+
+            state.itemList = wordPool()
+                .sort(() => Math.random() - 0.5)
+                .slice(0, state.itemCount - 1)
+                .concat(newWord)
+                .map((word) => ({ word, tileIndex: Math.floor(Math.random() * state.gridSize ** 2) }))
+                .sort(() => Math.random() - 0.5)
+        }));
+    })
 
     createEffect(() => {
         const headTileIndex = state.snakeTileIndexList[0];
@@ -117,16 +143,14 @@ export default function Snake() {
         if (hitItem.word.id === state.targetWord?.id) {
             console.log("hit target word");
             setState(produce((state) => {
-                const wordPool = WordList.getAllWords();
-                const newWord = wordPool[Math.floor(Math.random() * wordPool.length)];
+                const newWord = wordPool()[Math.floor(Math.random() * wordPool.length)];
                 state.targetWord = newWord;
-                const newItemList = WordList
-                  .getAllWords()
-                  .sort(() => Math.random() - 0.5)
-                  .slice(0, state.itemCount - 1)
-                  .concat(newWord)
-                  .map((word) => ({word, tileIndex: Math.floor(Math.random() * state.gridSize ** 2)}))
-                  .sort(() => Math.random() - 0.5);
+                const newItemList = wordPool()
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, state.itemCount - 1)
+                    .concat(newWord)
+                    .map((word) => ({ word, tileIndex: Math.floor(Math.random() * state.gridSize ** 2) }))
+                    .sort(() => Math.random() - 0.5);
                 state.itemList = newItemList;
                 state.prevWordList.push(hitItem.word);
                 state.snakeTileIndexList.push(state.snakeTileIndexList.at(-1)!);
@@ -144,7 +168,17 @@ export default function Snake() {
         <div
             class={styles.rootContainer}
         >
-            <div style={{"font-size": "4em"}}>
+            <div style={{}}>
+                <select value={category()} onChange={(event) => {
+                    console.log("changed to ", event.target.value)
+                    setCategory(event.target.value)
+                }}>
+                    <For each={WordList.categories}>{(category) =>
+                        <option value={category.id}>{category.id}</option>
+                    }</For>
+                </select>
+            </div>
+            <div style={{ "font-size": "3em" }}>
                 {state.targetWord?.korean}
             </div>
             <div
@@ -169,7 +203,7 @@ export default function Snake() {
                     }}
                 </For>
                 <For each={state.itemList}>
-                  {(item) => {
+                    {(item) => {
                         const x = Math.floor(item.tileIndex % state.gridSize) + 1;
                         const y = Math.floor(item.tileIndex / state.gridSize) + 1;
                         return <div
@@ -178,7 +212,7 @@ export default function Snake() {
                                 "grid-row": `${y}`,
                             }}
                         >{item.word.emoji}</div>
-                  }}
+                    }}
                 </For>
             </div>
         </div>
