@@ -41,7 +41,7 @@ export default function Snake() {
 
     const wordPool = () => {
         const cat = category();
-        return cat ? WordList.getWordsByCategory(cat) : WordList.getAllWords()
+        return cat !== undefined ? WordList.getWordsByCategory(cat) : WordList.getAllWords()
     }
 
     const moveMs = () => 1000 / state.moveFreq;
