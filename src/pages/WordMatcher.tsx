@@ -168,11 +168,9 @@ export default function WordMatcherNew() {
                     <select
                         value={category()}
                         onChange={(e) => setCategory(e.currentTarget.value)}>
-                        <option value="animals">Animals</option>
-                        <option value="foods">Foods</option>
-                        <option value="colors">Colors</option>
-                        <option value="daily_routines">Daily Routines</option>
-                        <option value="jobs">Jobs</option>
+                        <For each={word_list.getCategoryList()}>{(category) =>
+                            <option value={category}>{category}</option>
+                        }</For>
                     </select>
                 </div>
             </div>
