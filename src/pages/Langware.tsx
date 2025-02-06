@@ -7,6 +7,9 @@ import styles from "./Langware.module.css";
 import { For, JSX, createEffect, createSignal, onMount } from "solid-js";
 import * as WordList from "../wordlist";
 
+const gameList = ["counter", "color"] as const;
+type GameName = typeof gameList[number];
+
 type LangWareState = {
     state: "start" | "playing" | "stage_change" | "lose" | "stage_win",
     score: number,
@@ -14,11 +17,11 @@ type LangWareState = {
     currentTime: number,
     timeLimit: number,
     intervalId: number | undefined,
-    game: GameState | undefined,
-};
-
-type GameState = {
-    counter: CounterGameState,
+    game: {
+        current: GameName,
+        counter?: CounterGameState,
+        color?: ColorGameState,
+    } | undefined,
 };
 
 const initialLangWareState: LangWareState = {
@@ -26,7 +29,7 @@ const initialLangWareState: LangWareState = {
     score: 0,
     round: 0,
     currentTime: 0,
-    timeLimit: 10,
+    timeLimit: 15,
     intervalId: undefined,
     game: undefined,
 };
@@ -38,6 +41,24 @@ type CounterGameState = {
     emoji: string | undefined,
     emojiPositionList: { x: number, y: number }[],
 };
+
+
+type ColorGameState = {
+    pixelList: number[],
+    colorMap: (number|undefined)[],
+    colorList: WordList.Word[],
+    selectedColorIndex: number,
+};
+
+const initColorGame = (): ColorGameState => {
+    let colorList = WordList.getWordsByCategory("colors");
+    return {
+        pixelList: pixelArt.heart,
+        colorMap: [undefined, undefined, undefined],
+        colorList: colorList.sort(() => Math.random() - 0.5),
+        selectedColorIndex: 0,
+    };
+}
 
 const initCounterGame = (rootContainer: HTMLDivElement | undefined): CounterGameState => {
     const countGoal = Math.floor(Math.random() * 10) + 1;
@@ -60,7 +81,7 @@ export default function Langware() {
     onMount(() => {
         setState(produce((state) => {
             state.currentTime = state.timeLimit;
-            state.game = { counter: initCounterGame(rootContainer()) };
+            // state.game = { current: "color", color: initColorGame() };
         }));
     });
 
@@ -82,13 +103,21 @@ export default function Langware() {
     });
 
     const play = () => {
-        setState("game", "counter", initCounterGame(rootContainer()));
+        // setState("game", "counter", initCounterGame(rootContainer()));
+        setState("game", () => {
+            return {
+                current: "color",
+                color: initColorGame(),
+                counter: undefined,
+            };
+        });
         setState("state", "playing");
         setState("currentTime", state.timeLimit);
         setState("intervalId",
             setInterval(() => {
-                setState("currentTime", (prev) => prev ? prev - 0.1 : 0);
-            }, 100)
+                console.log("interval")
+                setState("currentTime", (prev) => Math.max(0, prev - 1));
+            }, 1000)
         );
     }
 
@@ -98,25 +127,63 @@ export default function Langware() {
     };
 
     const handleLoseScreenClick = () => {
-
         play();
+    };
+
+    const handleColorClick: JSX.EventHandler<HTMLDivElement, MouseEvent> = (event) => {
+        const target = event.currentTarget;
+        const targetIndex = target.getAttribute("data-index");
+        if (targetIndex) {
+            try {
+                const index = parseInt(targetIndex);
+                setState("game","color", "selectedColorIndex", index);
+            } catch (e) {
+                console.error("failed to parse color index");
+            }
+        }
+    };
+
+    const handlePixelClick: JSX.EventHandler<HTMLDivElement, MouseEvent> = (event) => {
+        const pixelIndex = event.currentTarget.getAttribute("data-color-index");
+        if (pixelIndex) {
+            try {
+                const index = parseInt(pixelIndex);
+                setState("game", "color", "colorMap", produce((map) => {
+                    map[index] = state.game?.color?.selectedColorIndex;
+                    console.log("handle click", map);
+                }));
+            } catch (e) {
+                console.log("failed to parse pixel index");
+            }
+        }
     }
 
     // handle currentTime change
     createEffect(() => {
-        if (Math.round(state.currentTime * 10) / 10 === 0) {
-            if (state.game?.counter.count === state.game?.counter.countGoal) {
-                setState("game", "counter", initCounterGame(rootContainer()));
-                setState("currentTime", state.timeLimit);
-            } else {
-                clearInterval(state.intervalId);
-                setState("intervalId", undefined);
-                setState("state", "lose");
+        if (state.currentTime === 0) {
+            if (state.game?.counter) {
+                if (state.game?.counter?.count === state.game?.counter?.countGoal) {
+                    setState("game", "counter", initCounterGame(rootContainer()));
+                    setState("currentTime", state.timeLimit);
+                } else {
+                    clearInterval(state.intervalId);
+                    setState("intervalId", undefined);
+                    setState("state", "lose");
+                }
+            } else if(state.game?.color) {
+                if (true) {
+                    setState("game", "counter", initCounterGame(rootContainer()));
+                    setState("currentTime", state.timeLimit);
+                } else {
+                    // clearInterval(state.intervalId);
+                    // setState("intervalId", undefined);
+                    // setState("state", "lose");
+                }
             }
         }
     });
 
-    const renderGameState = (state: GameState | undefined) => {
+    const renderGameState = (state: LangWareState["game"]  | undefined) => {
         if (state === undefined) return <></>;
 
         if (state.counter) {
@@ -131,9 +198,56 @@ export default function Langware() {
                                 "translate": `${emojiPosition.x}px ${emojiPosition.y}px`,
                             }}
                             class={styles.emoji}>
-                            {state.counter.emoji}
+                            {state.counter?.emoji}
                         </div>
                     }</For>
+                </>
+            );
+        }
+
+        if (state.color) {
+            return (
+                <>
+                    <div >
+                    <div class={styles.pixelGrid}>
+                        <For each={state.color.pixelList}>{(colorIndex) => 
+                            <div 
+                                data-color-index={colorIndex}
+                                onClick={handlePixelClick}
+                                style={{
+                                    background: state.color?.colorMap[colorIndex] !== undefined ? `${state.color?.colorList[state.color?.colorMap[colorIndex]].english}` : 'none'
+                                }}
+                                >{colorIndex}</div>
+                        }</For>
+                    </div>
+                        <div style={{
+                            display: 'inline-flex',
+                            "flex-direction": 'column',
+                            gap: '0.25em',
+                        }}>
+                        <For each={WordList.getWordsByCategory("colors")}>{(color, i) => 
+                            <div>
+                            <span>{i()}</span>
+                            <span>{':'}</span>
+                            <span>{color.korean}</span>
+                            </div>
+                        }</For>
+                        </div>
+                        </div>
+                    <div class={styles.colorList}>
+                        <For each={WordList.getWordsByCategory("colors")}>{(color, i) => 
+                            <div 
+                                onMouseDown={handleColorClick} 
+                                data-index={i()} 
+                                data-selected-color={i() === state.color?.selectedColorIndex}
+                                style={{
+                                    background: color.english,
+                                    width: '40px',
+                                    height: '40px',
+                                }}
+                                ></div>
+                        }</For>
+                    </div>
                 </>
             );
         }
@@ -152,8 +266,9 @@ export default function Langware() {
                     </div>
                 ) : renderGameState(state.game)}
             <div class={styles.timer} style={{
-                scale: `${state.currentTime / state.timeLimit} 1`,
-            }}></div>
+                "--time-limit": `${state.timeLimit}s`,
+                // scale: `${state.currentTime / state.timeLimit} 1`,
+            }}>{state.currentTime}</div>
         </div>
     );
 }
@@ -180,3 +295,16 @@ function getRandomAngle(): number {
     return (Math.PI / 16 - Math.PI / 32) * Math.random();
 
 }
+
+const pixelArt = {
+    heart: [
+    0, 0, 1, 1, 1, 1, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 0,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    0, 1, 1, 1, 1, 1, 0, 0,
+    0, 0, 1, 0, 0, 0, 0, 0,
+    0, 0, 1, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+  ]
+};

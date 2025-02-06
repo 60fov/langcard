@@ -5,7 +5,7 @@ import WordMatcher from './pages/WordMatcher';
 import Scattergories from './pages/Scattergories';
 import Snake from './pages/Snake';
 import Dictionary from './pages/Dictionary';
-import LangWare from './pages/LangWare';
+import LangWare from './pages/Langware';
 
 const App: Component = () => {
   return (

@@ -48,11 +48,44 @@
 
 .timer {
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
-    height: 20px;
+    padding: 1em;
+    /* height: 20px; */
     width: 100%;
-    scale: 1 1;
-    background: blue;
-    transition: scale 0.1s linear;
+    /* scale: 1 1; */
+    font-size: 3em;
+    /* background: blue; */
+    /* transition: scale var(--time-limit, 5s) linear; */
+}
+
+.pixelGrid {
+    display: inline-grid;
+    grid-template-rows: repeat(8, 30px);
+    grid-template-columns: repeat(8, 30px);
+    background: white;
+
+    & > * {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        font-size: 11px;
+    }
+}
+
+.colorList {
+    display: flex;
+    flex-flow: wrap;
+
+    & > * {
+        padding: 0.5em;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        user-select: none;
+
+        &[data-selected-color="true"] {
+            border: 1px solid #333;
+        }
+    }
 }
