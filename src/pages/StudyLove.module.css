@@ -1,0 +1,79 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.rootContainer {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game {
+  width: 390px;
+  aspect-ratio: 9 / 16;
+  background: red;
+  position: relative;
+}
+
+.npc {
+  position: absolute;
+}
+
+.upper {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  height: 60%;
+  background: lightgray;
+}
+
+.meter {
+  width: 20px;
+  height: 100%;
+  background: gray;
+  position: relative;
+
+  &:after {
+    content: "";
+    display: inline-block;
+    background: pink;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: var(--meter-value);
+    transition: height 0.1s ease;
+  }
+}
+
+.textBox {
+  background: lightblue;
+  flex: 1;
+  padding: 1em;
+  display: flex;
+  align-items: center;
+}
+
+.phoneButton {
+  aspect-ratio: 1;
+  width: 40px;
+  border-radius: 100%;
+  background: green;
+}
+
+.lower {
+}
+
+.gameChoiceList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  list-style: none;
+
+  & > li {
+    background: cyan;
+    padding: 0.25em;
+  }
+}

@@ -6,6 +6,7 @@ import Scattergories from './pages/Scattergories';
 import Snake from './pages/Snake';
 import Dictionary from './pages/Dictionary';
 import LangWare from './pages/Langware';
+import StudyLove from './pages/StudyLove';
 
 const App: Component = () => {
   return (
@@ -15,6 +16,7 @@ const App: Component = () => {
       <Route path="/snake" component={Snake} />
       <Route path="/dictionary" component={Dictionary} />
       <Route path="/langware" component={LangWare} />
+      <Route path="/studylove" component={StudyLove} />
     </Router>
   );
 };
