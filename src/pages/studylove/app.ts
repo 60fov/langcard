@@ -30,6 +30,7 @@ export type NPC = {
 };
 
 export type Game = HobbyGame | PhoneGame;
+export type GameName = typeof gameList[number]["name"];
 export const gameList = [
   {
     name: "hobby",
@@ -97,3 +98,16 @@ export const appState: ApplicationModel = {
   },
   game: undefined,
 };
+
+/* actions
+start game
+introduce or flee
+select game (game_name)
+...
+
+*/
+
+/** NOTE: this can fail, how do we handle */
+export function selectGame(app: ApplicationModel, game_name: GameName) {
+  
+}
