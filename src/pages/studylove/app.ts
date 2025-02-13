@@ -1,3 +1,4 @@
+import { getAssetPath } from "../../util";
 import * as WordList from "../../wordlist";
 
 export const stateList = [
@@ -202,12 +203,12 @@ function getRandomBackground(): string {
   const fn = ["alley", "sunset_street", "school_hallway"][
     Math.floor(Math.random() * 3)
   ];
-  return `src/assets/imgs/bg_${fn}.png`;
+  return getAssetPath(`/imgs/bg_${fn}.png`);
 }
 
 function generateNpc(): NPC {
   return {
-    asset: `src/assets/imgs/char${Math.ceil(Math.random() * 3)}.png`,
+    asset: getAssetPath(`/imgs/char${Math.ceil(Math.random() * 3)}.png`),
     hobbies: shuffle(WordList.getWordsByCategory("hobbies")).slice(0, 3),
     name: shuffle(["mina", "kate", "ashley"]).at(0)!,
     phoneNumber: Array.from({ length: 7 })

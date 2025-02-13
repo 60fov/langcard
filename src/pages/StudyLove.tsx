@@ -5,6 +5,7 @@ import styles from './StudyLove.module.css';
 import { For, JSX, createEffect, createSignal } from 'solid-js';
 
 import * as WordList from '../wordlist';
+import { getAssetPath } from '../util';
 
 // const testAppState: StudyLoveApp.ApplicationModel = {
 //     state: "choose_game",
@@ -114,7 +115,7 @@ export default function StudyLove() {
                 </div>
                 {state.state === "start" ? (
                     <div class={styles.startScreen} onClick={handleStart}>
-                        <img src="src/assets/imgs/title.webp" width="100%" />
+                        <img src={getAssetPath("/imgs/title.webp")} width="100%" />
                     </div>
                 ) : state.state === "intro" ? (
                     <>
