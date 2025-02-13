@@ -1,5 +1,18 @@
-import { getAssetPath } from "../../util";
 import * as WordList from "../../wordlist";
+
+import bg_alley from "./../../assets/imgs/bg_alley.png";
+import bg_sunset from "./../../assets/imgs/bg_sunset_street.png";
+import bg_school_hallway from "./../../assets/imgs/bg_school_hallway.png";
+import char1 from "./../../assets/imgs/char1.png";
+import char2 from "./../../assets/imgs/char2.png";
+import char3 from "./../../assets/imgs/char3.png";
+import titleArt from "./../../assets/imgs/title.webp";
+
+export const Assets = {
+  backgrounds: [bg_alley, bg_sunset, bg_school_hallway],
+  characters: [char1, char2, char3],
+  title: titleArt,
+};
 
 export const stateList = [
   "start",
@@ -166,7 +179,7 @@ export const Transaction = {
               app.meter.value = 0;
               app.npc = generateNpc();
               console.log(app.npc);
-              app.background = getRandomBackground();
+              app.background = randomFromArray(Assets.backgrounds);
             } else if (tr.data === "game_hobby") {
               const hobbyList = WordList.getWordsByCategory("hobbies");
               const filteredWordList = hobbyList.filter(
@@ -199,16 +212,13 @@ export const Transaction = {
   },
 };
 
-function getRandomBackground(): string {
-  const fn = ["alley", "sunset_street", "school_hallway"][
-    Math.floor(Math.random() * 3)
-  ];
-  return getAssetPath(`/imgs/bg_${fn}.png`);
+function randomFromArray<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function generateNpc(): NPC {
   return {
-    asset: getAssetPath(`/imgs/char${Math.ceil(Math.random() * 3)}.png`),
+    asset: randomFromArray(Assets.characters),
     hobbies: shuffle(WordList.getWordsByCategory("hobbies")).slice(0, 3),
     name: shuffle(["mina", "kate", "ashley"]).at(0)!,
     phoneNumber: Array.from({ length: 7 })
