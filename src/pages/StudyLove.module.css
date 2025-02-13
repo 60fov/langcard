@@ -9,6 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.25em;
 }
 
 .game {
@@ -17,6 +18,8 @@
   background: tan;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   & > * {
     position: relative;
     z-index: 10;
@@ -26,19 +29,21 @@
 .npc {
   position: absolute;
   height: 100%;
-    top: 50%;
-    left: 50%;
-    translate: -50% -70%;
-    z-index: 0;
+  top: 50%;
+  left: 50%;
+  translate: -50% -70%;
+  z-index: 0;
   & > img {
   }
 }
 
 .upper {
+  padding: 0.5em;
   display: flex;
   flex-direction: row;
+  gap: 0.5em;
   align-items: end;
-  height: 60%;
+  flex-basis: 60%;
   /* background: lightgray; */
 }
 
@@ -62,6 +67,8 @@
 
 .textBox {
   background: lightblue;
+  border: 2px solid darkblue;
+  border-radius: 8px;
   flex: 1;
   padding: 1em;
   display: flex;
@@ -72,10 +79,13 @@
   aspect-ratio: 1;
   width: 40px;
   border-radius: 100%;
-  background: green;
+  border: 2px solid hotpink;
+  background: pink;
 }
 
 .lower {
+  padding: 0.5em;
+  flex: 1;
 }
 
 .gameChoiceList {
@@ -85,8 +95,15 @@
   list-style: none;
 
   & > li {
-    background: cyan;
-    padding: 0.25em;
+    border: 2px solid hotpink;
+    border-radius: 8px;
+    background: pink;
+    padding: 0.375em;
+    transition: 0.1s scale ease;
+
+    &:hover {
+      scale: 1.02;
+    }
   }
 }
 
@@ -139,7 +156,6 @@
   flex-wrap: wrap;
   font-size: 2em;
   padding: 2em;
-  gap: 2em;
 
   & > * {
     cursor: pointer;
@@ -149,3 +165,70 @@
   }
 }
 
+.phone {
+  height: 100%;
+
+  [data-numpad] {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.25em;
+    width: 70%;
+    margin: auto;
+
+    & > button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid hotpink;
+      border-radius: 100%;
+      background: pink;
+      font-size: 2em;
+      font-weight: 900;
+      font-style: italic;
+      text-transform: uppercase;
+      &:hover {
+        background: hotpink;
+      }
+    }
+  }
+
+  [data-num-entry] {
+    display: flex;
+    align-items: center;
+    padding: 0.125em;
+    background: white;
+    border: 2px solid blue;
+    height: 20px;
+    margin-bottom: 10px;
+  }
+}
+
+.mbti {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  justify-content: center;
+  position: relative;
+
+  & [data-tile] {
+    background: lightgreen;
+    border: 2px solid darkgreen;
+    width: 40px;
+    aspect-ratio: 1;
+
+    label {
+      display: inline-flex;
+      width :100%;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+    }
+
+    input {
+      position: absolute;
+      visibility: hidden;
+    }
+  }
+}
