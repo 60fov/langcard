@@ -30,7 +30,7 @@ export type NPC = {
 };
 
 export type Game = HobbyGame | PhoneGame;
-export type GameName = typeof gameList[number]["name"];
+export type GameName = (typeof gameList)[number]["name"];
 export const gameList = [
   {
     name: "hobby",
@@ -65,12 +65,15 @@ export type PhoneGame = {
 };
 
 export type ApplicationModel = {
+  ledger: StateTransaction[];
+  ledgerNdx: number;
   state: State;
   speechBubbleText: string;
   background: string;
   time: number;
   meter: Meter;
   npc: NPC;
+  // NOTE: instead of optional game just store all game state since it is need after game is over
   game?: Game;
 };
 
@@ -80,7 +83,9 @@ export const phraseTable = {
   hobby: ["{hobby1}, {hobby2}, 그리고 {hobby3}(을/를) 좋아합니다"],
 };
 
-export const appState: ApplicationModel = {
+export const initalAppState: ApplicationModel = {
+  ledger: [],
+  ledgerNdx: 0,
   state: "start",
   speechBubbleText: "",
   background: "",
@@ -107,7 +112,55 @@ select game (game_name)
 
 */
 
-/** NOTE: this can fail, how do we handle */
-export function selectGame(app: ApplicationModel, game_name: GameName) {
-  
-}
+export type StateTransaction = {
+  type: string;
+  name: string;
+  data?: any;
+};
+
+export const Transaction = {
+  create(type: string, name: string, data?: any): StateTransaction {
+    return { type, name, data };
+  },
+  move(app: ApplicationModel, count: number) {
+    // TODO: ...
+  },
+  run(app: ApplicationModel, transactionList: StateTransaction[]): boolean {
+    for (const tr of transactionList) {
+      console.log("running tr", tr);
+      switch (tr.type) {
+        case "npc": {
+          if (tr.name === "set") {
+            app.npc = tr.data;
+          }
+          break;
+        }
+        case "game": {
+          if (tr.name === "set") {
+            app.game = tr.data;
+            app.speechBubbleText = phraseTable.hobby[0];
+          }
+          break;
+        }
+        case "state": {
+          if (tr.name === "set") {
+            // TODO: data validation
+            app.state = tr.data;
+          }
+          break;
+        }
+        case "meter": {
+          if (tr.name === "set") {
+            // TODO: data validation
+            app.meter.value = tr.data;
+          }
+          break;
+        }
+        default:
+          return false;
+      }
+      app.ledgerNdx += 1;
+    }
+    return true;
+  },
+};
