@@ -56,14 +56,14 @@ export const gameList = [
     name: "mbti",
     choice_text: "ask about mbti",
   },
-  {
-    name: "job",
-    choice_text: "ask about job",
-  },
-  {
-    name: "outfit",
-    choice_text: "ask about outfit",
-  },
+  // {
+  //   name: "job",
+  //   choice_text: "ask about job",
+  // },
+  // {
+  //   name: "outfit",
+  //   choice_text: "ask about outfit",
+  // },
 ] as const;
 
 // TODO: how can i limit type to be one of game list
@@ -176,6 +176,7 @@ export const Transaction = {
             if (tr.data === "intro") {
               // app = structuredClone(initalAppState);
               app.hobbyGame = structuredClone(initialHobbyGameState);
+              app.playedGameList = [];
               app.meter.value = 0;
               app.npc = generateNpc();
               console.log(app.npc);
@@ -220,7 +221,7 @@ function generateNpc(): NPC {
   return {
     asset: randomFromArray(Assets.characters),
     hobbies: shuffle(WordList.getWordsByCategory("hobbies")).slice(0, 3),
-    name: shuffle(["mina", "kate", "ashley"]).at(0)!,
+    name: shuffle(koreanNames).at(0)!,
     phoneNumber: Array.from({ length: 7 })
       .map(() => Math.floor(Math.random() * 10))
       .join(""),
@@ -261,6 +262,13 @@ export function getSpeechBubbleText(app: ApplicationModel): string {
 }
 
 const numberList = ["공", "일", "이", "삼", "사", "오", "육", "칠", "발", "구"];
+
+const koreanNames = [
+  "민준", "서준", "예준", "도윤", "하준",
+  "지호", "주원", "지훈", "현우", "우진",
+  "서연", "지유", "하은", "민서", "윤서",
+  "지민", "채원", "수아", "서현", "소율"
+];
 
 export const mbtiTable = [
   ["E", "I"],

@@ -6,31 +6,6 @@ import { For, JSX, createEffect, createSignal } from 'solid-js';
 
 import * as WordList from '../wordlist';
 
-// const testAppState: StudyLoveApp.ApplicationModel = {
-//     state: "choose_game",
-//     speechBubbleText: "",
-//     background: "",
-//     time: 0,
-//     meter: {
-//         value: 0,
-//         fallRate: 1,
-//         growRate: 10,
-//     },
-//     npc: {
-//         name: "mina",
-//         asset: "",
-//         hobbies: WordList.getWordsByCategory("hobbies").slice(0, 3),
-//         phoneNumber: "3471896",
-//     },
-//     game: undefined,
-// };
-const testNpc = {
-    name: "mina",
-    asset: "",
-    hobbies: WordList.getWordsByCategory("hobbies").slice(0, 3),
-    phoneNumber: "3471896",
-};
-
 export default function StudyLove() {
     const [state, setState] = createStore<StudyLoveApp.ApplicationModel>(StudyLoveApp.initalAppState);
 
@@ -70,9 +45,19 @@ export default function StudyLove() {
 
     const handlePhoneButtonClick: JSX.EventHandler<HTMLDivElement, MouseEvent> = (event) => {
         console.log("ui: phone button click");
-        {
+        console.log(state.meter.value / 100);
+        if (state.meter.value / 100 > Math.random()) {
+            // success
             const tr = StudyLoveApp.Transaction.create("state", "set", "phone_number");
             runTransaction(tr);
+        } else {
+            const tr = StudyLoveApp.Transaction.create("state", "set", "end_lose");
+            runTransaction(tr);
+            // TODO: set dialog via transaction then timeout to set to end_lose game state
+            // setTimeout(() => {
+            //     const tr = StudyLoveApp.Transaction.create(...);
+            //     runTransaction(tr);
+            // }, 1000);
         }
     };
 
@@ -84,15 +69,17 @@ export default function StudyLove() {
         }
     };
 
-    const handleIntro: JSX.EventHandler<HTMLButtonElement, MouseEvent> = (event) => {
+    const handleIntro: JSX.EventHandler<HTMLDivElement, MouseEvent> = (event) => {
         console.log("ui: handle intro");
-        const tr = StudyLoveApp.Transaction.create("state", "set", "choose_game");
-        runTransaction(tr);
+
+        runTransaction(StudyLoveApp.Transaction.create("meter", "set", state.meter.value + 25));
+        runTransaction(StudyLoveApp.Transaction.create("state", "set", "choose_game"));
+
     };
 
-    const handleFlee: JSX.EventHandler<HTMLButtonElement, MouseEvent> = (event) => {
+    const handleFlee: JSX.EventHandler<HTMLDivElement, MouseEvent> = (event) => {
         console.log("ui: handle flee");
-        const tr = StudyLoveApp.Transaction.create("state", "set", "end");
+        const tr = StudyLoveApp.Transaction.create("state", "set", "end_lose");
         runTransaction(tr);
     };
 
@@ -108,7 +95,7 @@ export default function StudyLove() {
                 <button onClick={() => prevTransaction()}>prev state</button>
                 <button onClick={() => nextTransaction()}>next state</button>
             </div> */}
-            <div class={styles.game} style={{ "background": `url(${state.background})` }}>
+            <div class={styles.game} style={{ "background-image": `url(${state.background})` }}>
                 <div class={styles.npc}>
                     <img src={state.npc.asset} />
                 </div>
@@ -116,13 +103,6 @@ export default function StudyLove() {
                     <div class={styles.startScreen} onClick={handleStart}>
                         <img src={StudyLoveApp.Assets.title} width="100%" />
                     </div>
-                ) : state.state === "intro" ? (
-                    <>
-                        <div class={styles.introScreen}>
-                            <button class={styles.choiceButton} onClick={handleIntro}>introduce self</button>
-                            <button class={styles.choiceButton} onClick={handleFlee}>flee</button>
-                        </div>
-                    </>
                 ) : state.state === "end_win" ? (
                     <>
                         <div class={styles.endScreen} onClick={handleEndScreenClick}>
@@ -141,14 +121,29 @@ export default function StudyLove() {
                             {/* TODO: turn into progress bar */}
                             <div class={styles.meter} style={{ "--meter-value": `${state.meter.value}%` }}></div>
                             <div class={styles.textBox}>{StudyLoveApp.getSpeechBubbleText(state)}</div>
-                            <div class={styles.phoneButton} onClick={handlePhoneButtonClick}></div>
+                            <div class={styles.phoneButton} onClick={handlePhoneButtonClick}>
+                                📞
+                            </div>
                         </div>
                         <div class={styles.lower}>
                             {/* TODO: render games here */}
-                            {state.state === "choose_game" ? (
+                            {state.state === "intro" ? (
+                                <>
+                                    <div class={styles.introScreen}>
+                                        <div class={styles.choiceButton} onClick={handleIntro}>introduce self</div>
+                                        <div class={styles.choiceButton} onClick={handleFlee}>flee</div>
+                                    </div>
+                                </>
+                            ) : state.state === "choose_game" ? (
                                 <ul class={styles.gameChoiceList}>
                                     <For each={StudyLoveApp.gameList}>{(game) =>
-                                        <li onClick={handleGameChoiceClick} data-game={game.name}>{game.choice_text}</li>
+                                        <li
+                                            data-disabled={state.playedGameList.includes(game.name)}
+                                            class={styles.choiceButton}
+                                            onClick={handleGameChoiceClick}
+                                            data-game={game.name}>
+                                            {game.choice_text}
+                                        </li>
                                     }</For>
                                 </ul>
                             ) : state.state === "game_hobby" ? (

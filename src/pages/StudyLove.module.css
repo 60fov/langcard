@@ -20,6 +20,8 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  background-size: 200%;
+  background-position: bottom;
   & > * {
     position: relative;
     z-index: 10;
@@ -52,9 +54,10 @@
   height: 100%;
   background: gray;
   position: relative;
+  overflow: hidden;
 
   &:after {
-    content: "";
+    content: "♥";
     display: inline-block;
     background: pink;
     position: absolute;
@@ -76,6 +79,9 @@
 }
 
 .phoneButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   aspect-ratio: 1;
   width: 40px;
   border-radius: 100%;
@@ -95,14 +101,10 @@
   list-style: none;
 
   & > li {
-    border: 2px solid hotpink;
-    border-radius: 8px;
-    background: pink;
-    padding: 0.375em;
-    transition: 0.1s scale ease;
-
-    &:hover {
-      scale: 1.02;
+    user-select: none;
+    cursor: none;
+    &[data-disabled=true] {
+      text-decoration: line-through;
     }
   }
 }
@@ -128,13 +130,15 @@
 }
 
 .choiceButton {
-  padding: 1em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid hotpink;
+  border-radius: 8px;
+  background: pink;
+  padding: 0.375em;
+  transition: 0.1s scale ease;
+
+  &:hover {
+    scale: 1.02;
+  }
 }
 
 .endScreen {
@@ -220,7 +224,7 @@
 
     label {
       display: inline-flex;
-      width :100%;
+      width: 100%;
       height: 100%;
       align-items: center;
       justify-content: center;
