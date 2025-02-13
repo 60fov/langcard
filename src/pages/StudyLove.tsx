@@ -56,23 +56,8 @@ export default function StudyLove() {
     const handleGameChoiceClick: JSX.EventHandler<HTMLLIElement, MouseEvent> = (event) => {
         const selectedGame = event.currentTarget.getAttribute("data-game");
         if (selectedGame) {
-            const hobbyGame: StudyLoveApp.HobbyGame = {
-                selectedWordList: [],
-                type: 'hobby',
-                wordPool: WordList
-                    .getWordsByCategory("hobbies")
-                    .filter((wordListWord) => state.npc.hobbies.find((npcHobbyWord) => npcHobbyWord !== wordListWord))
-                    .sort(() => Math.random() - 0.5)
-                    .slice(0, 3)
-                    .concat(state.npc.hobbies)
-                    .sort(() => Math.random() - 0.5),
-            };
             {
-                const tr = StudyLoveApp.Transaction.create("game", "set", hobbyGame);
-                runTransaction(tr);
-            }
-            {
-                const tr = StudyLoveApp.Transaction.create("state", "set", "playing_game");
+                const tr = StudyLoveApp.Transaction.create("state", "set", "game_hobby");
                 runTransaction(tr);
             }
             // StudyLoveApp.selectGame(testAppState, selectedGame);
@@ -85,10 +70,6 @@ export default function StudyLove() {
         console.log("ui: start click");
         {
             const tr = StudyLoveApp.Transaction.create("state", "set", "intro");
-            runTransaction(tr);
-        }
-        {
-            const tr = StudyLoveApp.Transaction.create("npc", "set", testNpc);
             runTransaction(tr);
         }
     }
@@ -117,7 +98,10 @@ export default function StudyLove() {
                 <button onClick={() => prevTransaction()}>prev state</button>
                 <button onClick={() => nextTransaction()}>next state</button>
             </div> */}
-            <div class={styles.game}>
+            <div class={styles.game} style={{"background": `url(${state.background})`}}>
+                <div class={styles.npc}>
+                    <img src={state.npc.asset} />
+                    </div>
                 {state.state === "start" ? (
                     <div class={styles.startScreen} onClick={handleStart}>
                         click to start
@@ -137,11 +121,10 @@ export default function StudyLove() {
                     </>
                 ) : (
                     <>
-                        <div class={styles.npc}></div>
                         <div class={styles.upper}>
                             {/* TODO: turn into progress bar */}
                             <div class={styles.meter} style={{ "--meter-value": `${state.meter.value}%` }}></div>
-                            <div class={styles.textBox}>{renderSpeechBubbleText(state.speechBubbleText, state.npc.hobbies.map((word) => word.korean))}</div>
+                            <div class={styles.textBox}>{StudyLoveApp.getSpeechBubbleText(state)}</div>
                             <div class={styles.phoneButton}></div>
                         </div>
                         <div class={styles.lower}>
@@ -152,9 +135,9 @@ export default function StudyLove() {
                                         <li onClick={handleGameChoiceClick} data-game={game.name}>{game.choice_text}</li>
                                     }</For>
                                 </ul>
-                            ) : state.state === "playing_game" ? (
-                                <>{renderGame(state, setState)}</>
-                            ) : (<></>)}
+                            ) : state.state === "game_hobby" ? (
+                                <>{renderHobby(state, setState)}</>
+                            ) : <></> }
                         </div>
                     </>
                 )}
@@ -163,43 +146,52 @@ export default function StudyLove() {
     );
 }
 
-function renderGame(state: StudyLoveApp.ApplicationModel, setState: SetStoreFunction<StudyLoveApp.ApplicationModel>) {
-    if (state.game === undefined) return <>game broke send halp</>;
 
-    const handleEmojiClick: JSX.EventHandler<HTMLDivElement, MouseEvent> = (event) => {
-        if (state.game?.type === "hobby") {
+function renderHobby(state: StudyLoveApp.ApplicationModel, setState: SetStoreFunction<StudyLoveApp.ApplicationModel>) {
+
+        createEffect(() => {
+            const list = state.hobbyGame.selectedWordList;
+            const list1 = state.npc.hobbies;
+           if (list1.length === list.length) {
+            setState(produce((state) => {
+                state.ledger.push(StudyLoveApp.Transaction.create("state", "set", "choose_game"));
+                StudyLoveApp.Transaction.run(state, state.ledger.slice(state.ledgerNdx));
+            }));
+           }
+        });
+
+        const handleEmojiClick: JSX.EventHandler<HTMLDivElement, MouseEvent> = (event) => {
             const wordId = event.currentTarget.getAttribute("data-word-id");
             if (wordId) {
                 const word = WordList.getWordById(wordId);
                 if (word !== undefined) {
-                    setState("game", produce((game) => {
-                        if (game?.type === 'hobby') {
-                            game.selectedWordList.push(word);
-                        }
-                    }))
+                    if (word.id === state.npc.hobbies[state.hobbyGame.selectedWordList.length].id) {
+                        setState(produce((state) => {
+                            state.ledger.push(StudyLoveApp.Transaction.create("meter", "set", state.meter.value + 15));
+                            StudyLoveApp.Transaction.run(state, state.ledger.slice(state.ledgerNdx));
+                        }));
+                    }
+                    setState("hobbyGame", produce((game) => {
+                        game.selectedWordList.push(word);
+                    }));
                 } else {
                     console.error("hobby game: emoji clicked and data-word-id doesnt corresponsed to a word in the word list");
                 }
             } else {
                 console.error("hobby game: emoji clicked w/o data-word-id attribute???");
             }
-        }
     };
 
-    switch (state.game.type) {
-        case "hobby": {
-            return (
-                <div class={styles.hobbyGame}>
-                    <For each={state.game.wordPool}>{(word) =>
-                        <div onClick={handleEmojiClick} data-word-id={word.id}>{word.emoji}</div>
-                    }</For>
-                </div>
-            );
-        }
-        default: return <></>;
-    }
+    return (
+        <div class={styles.hobbyGame}>
+            <For each={state.hobbyGame.wordPool}>{(word) =>
+                <div onClick={handleEmojiClick} data-word-id={word.id}>{word.emoji}</div>
+            }</For>
+        </div>
+    )
 }
 
+/** dont use this */
 function renderSpeechBubbleText(template: string, list: string[]) {
     const result = template.replace(/\{hobby(\d)\}/g, (_, index) => list[index - 1]);
     return result;

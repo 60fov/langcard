@@ -4,7 +4,7 @@ export const stateList = [
   "start",
   "intro",
   "choose_game",
-  "playing_game",
+  "game_hobby",
   "phone_number",
   "end",
 ] as const;
@@ -57,6 +57,12 @@ export type HobbyGame = {
   selectedWordList: WordList.Word[];
 };
 
+export const initialHobbyGameState: HobbyGame = {
+  type: "hobby",
+  wordPool: [],
+  selectedWordList: [],
+};
+
 export type PhoneGame = {
   type: "phone";
   state: "phone" | "name";
@@ -73,8 +79,7 @@ export type ApplicationModel = {
   time: number;
   meter: Meter;
   npc: NPC;
-  // NOTE: instead of optional game just store all game state since it is need after game is over
-  game?: Game;
+  hobbyGame: HobbyGame;
 };
 
 export type PhraseTable = typeof phraseTable;
@@ -101,22 +106,23 @@ export const initalAppState: ApplicationModel = {
     hobbies: [],
     phoneNumber: "",
   },
-  game: undefined,
+  hobbyGame: initialHobbyGameState,
 };
-
-/* actions
-start game
-introduce or flee
-select game (game_name)
-...
-
-*/
 
 export type StateTransaction = {
   type: string;
   name: string;
   data?: any;
 };
+
+export function getSpeechBubbleText(app: ApplicationModel): string {
+  switch(app.state) {
+    case "game_hobby": {
+      return `${app.npc.hobbies[0].korean}, ${app.npc.hobbies[1].korean}, 그리고 ${app.npc.hobbies[2].korean} 좋아합니다`
+    }
+  }
+  return '';
+}
 
 export const Transaction = {
   create(type: string, name: string, data?: any): StateTransaction {
@@ -135,17 +141,20 @@ export const Transaction = {
           }
           break;
         }
-        case "game": {
-          if (tr.name === "set") {
-            app.game = tr.data;
-            app.speechBubbleText = phraseTable.hobby[0];
-          }
-          break;
-        }
         case "state": {
           if (tr.name === "set") {
             // TODO: data validation
             app.state = tr.data;
+            if (tr.data === "intro") {
+              app.npc = generateNpc();
+              app.background = getRandomBackground();
+              console.log(app);
+            } else if (tr.data === "game_hobby") {
+              const hobbyList = WordList.getWordsByCategory("hobbies");
+              const filteredWordList = hobbyList.filter((wordListWord) => !app.npc.hobbies.find(npcHobby => npcHobby.id === wordListWord.id));
+              app.hobbyGame.wordPool = shuffle(app.npc.hobbies.concat(filteredWordList).slice(0, 6));
+              // console.log(app);
+            }
           }
           break;
         }
@@ -164,3 +173,21 @@ export const Transaction = {
     return true;
   },
 };
+
+function getRandomBackground(): string {
+  const fn = ["alley", "sunset_street", "school_hallway"][Math.floor(Math.random() * 3)];
+  return `src/assets/imgs/bg_${fn}.png`
+}
+
+function generateNpc(): NPC {
+  return {
+    asset: `src/assets/imgs/char${Math.ceil(Math.random() * 3)}.png`,
+    hobbies: shuffle(WordList.getWordsByCategory("hobbies")).slice(0, 3),
+    name: shuffle(["mina", "kate", "ashley"]).at(0)!,
+    phoneNumber: Array.from({length: 7}).map(() => Math.floor(Math.random() * 10)).join(""),
+  }
+}
+
+function shuffle<T>(arr: T[]) : T[] {
+  return [...arr].sort(() => 0.5 - Math.random());
+}

@@ -16,10 +16,22 @@
   aspect-ratio: 9 / 16;
   background: tan;
   position: relative;
+  overflow: hidden;
+  & > * {
+    position: relative;
+    z-index: 10;
+  }
 }
 
 .npc {
   position: absolute;
+  height: 100%;
+    top: 50%;
+    left: 50%;
+    translate: -50% -70%;
+    z-index: 0;
+  & > img {
+  }
 }
 
 .upper {
@@ -27,7 +39,7 @@
   flex-direction: row;
   align-items: end;
   height: 60%;
-  background: lightgray;
+  /* background: lightgray; */
 }
 
 .meter {
@@ -136,3 +148,4 @@
     border-radius: 100%;
   }
 }
+
